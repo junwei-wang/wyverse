@@ -8,18 +8,24 @@ LLVM_VER=8.0.0
 CMAKE_INSTALL_PREFIX=install
 
 download_llvm_and_clang() {
-    mkdir -p source/llvm
-    cd source
+    mkdir -p source && cd source
     wget http://releases.llvm.org/8.0.0/llvm-${LLVM_VER}.src.tar.xz
-    tar Jxf llvm-8.0.0.src.tar.xz -C llvm --strip-components=1
+    if [ "$TRAVIS_OS_NAME" = "windows" ]; then
+	7z e llvm-${LLVM_VER}.src.tar.xz
+	7z x llvm-${LLVM_VER}.src.tar
+	mv llvm-${LLVM_VER}.src llvm
+    else
+	mkdir llvm
+	tar Jxf llvm-${LLVM_VER}.src.tar.xz -C llvm --strip-components=1
+    fi
     cd ..
 }
 
 copy_wyverse_to_llvm() {
     # keep the slash
-    rsync -av lib/ source/llvm/lib/
-    rsync -av tools/ source/llvm/tools/
-    rsync -av include/ source/llvm/include/
+    cp -r lib source/llvm/
+    cp -r tools source/llvm/
+    cp -r include source/llvm/
 }
 
 generate_build_scripts() {

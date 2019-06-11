@@ -10,9 +10,16 @@ addons:
   homebrew:
     packages:
       - ninja
+
 os:
+  - windows
   - linux
   - osx
+
+before_install:
+  - if [ "$TRAVIS_OS_NAME" = "windows" ]; then choco install -y ninja; fi
+  - if [ "$TRAVIS_OS_NAME" = "windows" ]; then export CC="/c/ProgramData/chocolatey/lib/mingw/tools/install/mingw64/bin/x86_64-w64-mingw32-gcc"; fi
+  - if [ "$TRAVIS_OS_NAME" = "windows" ]; then export CXX="/c/ProgramData/chocolatey/lib/mingw/tools/install/mingw64/bin/x86_64-w64-mingw32-g++"; fi
 
 script:
   - ./build.sh
